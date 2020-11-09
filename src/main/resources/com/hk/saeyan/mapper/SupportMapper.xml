@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+<mapper namespace="com.hk.saeyan.mapper.SupportMapper">
+
+	<!-- 게시글 목록 -->
+	<select id="noticeList" resultType="com.hk.saeyan.dto.Notice"
+		parameterType="com.hk.saeyan.dto.Criteria">
+		SELECT id, n_seq, n_date, n_content, n_title
+		FROM
+		(SELECT id,
+		n_seq, n_date, n_content, n_title,
+		row_number()
+		over(ORDER
+		BY n_seq DESC) as rnum FROM notice) WHERE rnum
+		BETWEEN #{rowStart} AND
+		#{rowEnd}
+		ORDER BY n_seq DESC
+	</select>
+
+	<!-- 게시글 총 개수 -->
+	<select id="noticeListCount"
+		parameterType="com.hk.saeyan.dto.SearchCriteria" resultType="int">
+
+		SELECT COUNT(n_seq)
+		FROM notice
+		WHERE 1 = 1
+		<include refid="search"></include>
+		And n_seq > 0
+	</select>
+
+	<sql id="search">
+		<if test="searchType != null">
+			<if test="searchType == 't'.toString()">AND TITLE LIKE '%' || #{keyword} || '%'</if>
+			<if test="searchType == 'c'.toString()">AND CONTENT LIKE '%' || #{keyword} || '%'</if>
+			<if test="searchType == 'w'.toString()">AND WRITER LIKE '%' || #{keyword} || '%'</if>
+			<if test="searchType == 'tc'.toString()">AND (TITLE LIKE '%' || #{keyword} || '%') or (CONTENT
+				LIKE '%' || #{keyword} || '%')</if>
+		</if>
+	</sql>
+
+	<!-- 게시글 상세조회 -->
+
+	<select id="selectOne" parameterType="int"
+		resultType="com.hk.saeyan.dto.Notice">
+
+		SELECT id, n_seq, n_date, n_content, n_title FROM
+		NOTICE
+		where n_seq = #{n_seq}
+
+	</select>
+	
+	<!-- 게시글 수정 -->
+	<update id="update" parameterType="com.hk.saeyan.dto.Notice">
+
+		UPDATE notice SET ID=#{id},
+		n_CONTENT=#{n_content}, n_TITLE=#{n_title} WHERE
+		n_seq = #{n_seq}
+
+	</update>
+
+	<!-- 게시글 삭제 -->
+
+	<delete id="delete" parameterType="int">
+
+		DELETE FROM notice WHERE n_seq = #{n_seq}
+
+	</delete>
+	
+	<insert id="write">
+	<selectKey resultType="int" keyProperty="n_seq" order="BEFORE">
+select NVL(MAX(n_seq) + 1, 1) from notice 
+</selectKey>
+
+		INSERT INTO notice (ID, n_seq , n_DATE, n_CONTENT,
+		n_TITLE)
+		VALUES(#{id}, #{n_seq}, sysdate,
+		#{n_content} ,
+		#{n_title} )
+
+	</insert>
+
+
+
+</mapper>

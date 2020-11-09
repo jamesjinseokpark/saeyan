@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hk.saeyan.mapper.AuthMapper">
+
+<insert id="addPersonalPay" parameterType="com.hk.saeyan.dto.UserInfo">
+	INSERT INTO PERSONALPAY (ID, CARDCOM, CARDNUM, CARDEXP, CARDCVC) 
+	VALUES (#{id}, #{cardCom}, #{cardNum}, #{cardExp}, #{cardCvc})
+</insert>
+
+<!-- id중복체크 sql문 -->
+<select id="checkId" parameterType="String" resultType="com.hk.saeyan.dto.Members">
+	select * from members where id=#{id}
+</select>
+
+<select id ="checkEmail" parameterType="String" resultType="com.hk.saeyan.dto.Members">
+	select * from members where email=#{email}
+</select>
+
+<insert id="addMembers" parameterType="com.hk.saeyan.dto.UserInfo">
+	INSERT INTO MEMBERS (ID, PWD, NAME, EMAIL, PNUM, CARDCHECK, UDCHECK, USERZIPCODE, USERFIRSTADDR, USERSECONDADDR, USEREXTRAADDR, GRADE)
+	VALUES (#{id}, #{pwd}, #{name}, #{email}, #{pnum}, #{cardCheck}, #{udCheck}, #{userZipCode}, #{userFirstAddr}, #{userSecondAddr}, #{userExtraAddr}, #{grade})
+</insert>
+
+<insert id="addManager" parameterType="com.hk.saeyan.dto.ManagerInfo">
+	INSERT INTO MEMBERS (ID, PWD, NAME, EMAIL, PNUM, CARDCHECK, UDCHECK, USERZIPCODE, USERFIRSTADDR, USERSECONDADDR, USEREXTRAADDR, GRADE)
+	VALUES (#{id}, #{pwd}, #{name}, #{email}, #{pnum}, #{cardCheck}, 'N', #{userZipCode}, #{userFirstAddr}, #{userSecondAddr}, #{userExtraAddr}, #{grade})
+</insert>
+
+<select id="selectPname" resultType="com.hk.saeyan.dto.Product">
+	SELECT * FROM PRODUCT
+</select>
+
+<insert id="addStores" parameterType="com.hk.saeyan.dto.ManagerInfo">
+	INSERT INTO STORES (ID, SNAME, SCONTACT, SNUM, BANK, BNUM, PERMIT, SDCHECK, AREA_NUM, STOREFIRSTADDR, STORESECONDADDR, STOREEXTRAADDR, STOREZIPCODE, SP1, SP2, SP3, SP4)
+	VALUES (#{id}, #{sname}, #{scontact}, #{snum}, #{bank}, #{bnum}, #{permit}, #{sdcheck}, #{area_num}, #{storeFirstAddr}, #{storeSecondAddr}, #{storeExtraAddr}, #{storeZipCode}, #{sp1}, #{sp2}, #{sp3}, #{sp4})
+</insert>
+
+<insert id="addItemList" parameterType="com.hk.saeyan.dto.ManagerInfo">
+	INSERT INTO ITEMLIST (SNUM, ITEMS)
+	VALUES (#{snum}, #{items})
+</insert>
+
+<insert id="addMapData" parameterType="com.hk.saeyan.dto.ManagerInfo">
+	<selectKey resultType="int" keyProperty="mno" order="BEFORE" >
+		SELECT MAX(mno)+1 FROM MAPDATA
+	</selectKey>
+	INSERT INTO MAPDATA (MNO, SNUM, SADDRESS) 
+	VALUES (#{mno}, #{snum}, #{saddress})
+</insert>
+
+<insert id="addEmailCheck" parameterType="com.hk.saeyan.dto.EmailCheck">
+	INSERT INTO EMAILCHECK (EMAIL, JOINCODE)
+	VALUES (#{email}, #{joinCode})
+</insert>
+
+<select id="getDbCode" parameterType="String" resultType="String">
+	SELECT JOINCODE FROM (
+		SELECT JOINCODE FROM EMAILCHECK
+		WHERE EMAIL=#{email}
+		ORDER BY ROWNUM DESC)
+	WHERE ROWNUM = 1
+</select>
+
+<select id="findId" parameterType="com.hk.saeyan.dto.Members" resultType="com.hk.saeyan.dto.Members">
+	SELECT * FROM MEMBERS
+	WHERE name=#{name} and EMAIL=#{email}
+</select>
+
+<update id="updateRandomPwd" parameterType="com.hk.saeyan.dto.Members">
+	UPDATE MEMBERS
+	SET PWD=#{pwd}
+	WHERE ID=#{id} AND EMAIL=#{email}
+</update>
+
+<select id="getLikeStore1" parameterType="String" resultType="com.hk.saeyan.dto.MemberLikeStores">
+	SELECT m.NAME , m.ID , m.LIKESTORE1 , s.SNAME , s.SNUM , s.SCONTACT
+	FROM MEMBERS m , STORES s 
+	WHERE m.LIKESTORE1 = s.SNUM AND m.ID=#{id} 
+</select>
+
+<select id="getLikeStore2" parameterType="String" resultType="com.hk.saeyan.dto.MemberLikeStores">
+	SELECT m.NAME , m.ID , m.LIKESTORE2 , s.SNAME , s.SNUM , s.SCONTACT
+	FROM MEMBERS m , STORES s 
+	WHERE m.LIKESTORE2 = s.SNUM AND m.ID=#{id}
+</select>
+
+<select id="getLikeStore3" parameterType="String" resultType="com.hk.saeyan.dto.MemberLikeStores">
+	SELECT m.NAME , m.ID , m.LIKESTORE3 , s.SNAME , s.SNUM , s.SCONTACT
+	FROM MEMBERS m , STORES s 
+	WHERE m.LIKESTORE3 = s.SNUM AND m.ID=#{id}
+</select>
+</mapper>
+	

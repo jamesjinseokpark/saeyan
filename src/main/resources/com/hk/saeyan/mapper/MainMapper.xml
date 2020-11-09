@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hk.saeyan.mapper.MainMapper">
+
+<select id="priceList" resultType="com.hk.saeyan.dto.Price">
+
+select *from price
+</select>
+
+<select id="storesList" resultType="com.hk.saeyan.dto.Stores">
+
+select * from stores
+
+</select>
+
+<select id="selectLikeStore"  resultType="com.hk.saeyan.dto.Members">
+   SELECT *
+   FROM MEMBERS
+   WHERE ID=#{id}
+</select>
+
+<update id="updateLikeStore1" parameterType="String">
+   UPDATE MEMBERS
+   SET
+   LIKESTORE1=#{snum}
+   WHERE ID=#{id}
+</update>
+
+<update id="updateLikeStore2">
+   UPDATE MEMBERS
+   SET
+   LIKESTORE2=#{snum}
+   WHERE ID=#{id}
+</update>
+
+<update id="updateLikeStore3" >
+   UPDATE MEMBERS
+   SET
+   LIKESTORE3=#{snum}
+   WHERE ID=#{id}
+</update>
+
+<update id="deleteLikeStore1" parameterType="String">
+   UPDATE MEMBERS
+   SET
+   LIKESTORE1=null
+   WHERE ID=#{id} 
+</update>
+
+<update id="deleteLikeStore2" parameterType="String">
+   UPDATE MEMBERS
+   SET
+   LIKESTORE2=null
+   WHERE ID=#{id}
+</update>
+
+<update id="deleteLikeStore3" parameterType="String">
+   UPDATE MEMBERS
+   SET
+   LIKESTORE3=null
+   WHERE ID=#{id}
+</update>
+
+<select id="userAdr" resultType="com.hk.saeyan.dto.ManagerInfo">
+
+select userFirstAddr  from members where id=#{id}
+
+</select>
+
+ <select id="selectsStoreOne" parameterType="String" 
+       resultType="com.hk.saeyan.dto.StoreInfo"> 
+<!--       SELECT s.ID , s.SNAME , s.SADDRESS, i.snum, scontact,bank, bnum,permit,s_date,area_num,sdcheck,storeZipCode,storeFirstAddr,storeSecondAddr,storeExtraAddr,items,Y1,B1,T1,M1,P1,K1,J1,C1,P2,D1,S1,C2,B2,w_id,orderNum,r_content,star,badCnt,r_date,depth,r_no,rcom_no,r_id,rcom_content,rcom_date,Y1P,B1P,T1P,M1P,P1P,K1P,J1P,C1P,P2P,D1P,S1P,C2P,B2P,p_date,p_seq FROM ITEMLIST i,STORES s,price,review WHERE i.SNUM = s.SNUM AND i.snum=#{snum} -->
+      SELECT s.ID , s.SNAME , i.snum, scontact,bank, bnum,permit,s_date,area_num,sdcheck,storeZipCode,STORESECONDADDR,STOREFIRSTADDR,storeExtraAddr,items FROM ITEMLIST i,STORES s WHERE i.SNUM = s.SNUM AND i.snum=#{snum}
+</select> 
+
+<select id="price" resultType="com.hk.saeyan.dto.Product">
+
+   select * from Product
+
+</select>
+
+<insert id="insert"  parameterType="com.hk.saeyan.dto.Cart"  > 
+<selectKey resultType="int" keyProperty="cart_seq" order="BEFORE">
+select NVL(MAX(cart_seq) + 1, 1) from CART 
+</selectKey>
+ INSERT INTO CART (id,snum,sname,ITEMS,PAY_CART,cart_seq,choice,c_check) 
+  VALUES(#{id},#{snum},#{sname},#{items},#{pay_cart},#{cart_seq},#{choice},#{c_check})
+ </insert>
+ 
+ 
+<select id="countCart" resultType="int"> 
+      SELECT COUNT(*) FROM cart  
+      WHERE  cart_seq = #{cart_seq}
+ </select> 
+
+<select id="userCart" resultType="com.hk.saeyan.dto.Cart">
+
+select m.id,ITEMS, SNUM, SNAME, C_CHECK, CART_SEQ, CHOICE,pay_cart from Members m,cart c where m.id=c.id and m.id=#{id}
+
+</select>
+
+ <update id="cartPrice"> 
+ update cart set
+ choice=#{choice} where 
+ cart_seq=#{seq}
+ </update> 
+ 
+<delete id="deleteCart">
+
+delete from cart where cart_seq=#{cart_seq}
+
+</delete>
+ 
+
+<select id="userPay" resultType="com.hk.saeyan.dto.FinalPay">
+
+SELECT m.id,name,pnum,email,USERZIPCODE,USERFIRSTADDR,USEREXTRAADDR,USERSECONDADDR,cardcheck,cardcom,cardnum,cardcvc,cardexp,b.bubble FROM MEMBERS m,PERSONALPAY p ,(SELECT id, BUBBLE FROM (SELECT bubble,id FROM BUBBLE WHERE id=#{id} order by b_seq DESC ) WHERE rownum=1) b
+WHERE m.id=p.id(+) AND m.id=b.id(+) AND m.id=#{id} 
+
+</select>
+<select id="cartpay" resultType="com.hk.saeyan.dto.FinalPay">
+
+select items,SNUM, SNAME,CART_SEQ,pay_cart from members m,cart c where m.id=c.id and m.id=#{id} and c.choice='Y'
+
+</select>
+
+<select id="bubbleplus"  resultType="int" parameterType="com.hk.saeyan.dto.Bubble">
+
+SELECT bubble FROM (
+      SELECT bubble
+ FROM BUBBLE 
+      WHERE id=#{id}
+      ORDER BY B_SEQ DESC)
+   WHERE ROWNUM = 1
+
+</select>
+
+<select id="accpay" resultType="int" parameterType="com.hk.saeyan.dto.Account">
+
+SELECT BALANCE FROM (
+      SELECT BALANCE
+ FROM Account 
+      ORDER BY A_SEQ DESC)
+   WHERE ROWNUM = 1
+
+</select>
+
+<insert id="bubblePay" parameterType="com.hk.saeyan.dto.Bubble" >
+<selectKey resultType="int" keyProperty="b_seq" order="BEFORE">
+select NVL(MAX(b_seq) + 1, 1) from Bubble 
+
+</selectKey>
+INSERT INTO BUBBLE (id,B_PRICE, B_DATE,b_bubble,b_seq,bubble,P_bubble) VALUES(#{id},#{b_price}, sysdate,#{b_bubble},#{b_seq},#{bubble},0) 
+
+</insert>
+
+<insert id="bubAcc" parameterType="com.hk.saeyan.dto.Account">
+<selectKey resultType="int" keyProperty="a_seq" order="BEFORE">
+select NVL(MAX(a_seq) + 1, 1) from Account 
+
+</selectKey>
+
+INSERT INTO ACCOUNT (BALANCE, A_DATE, I_PRICE, DETAIL, ID, O_PRICE, A_SEQ) VALUES(#{balance}, sysdate, #{i_price}, '버블결제', #{id}, 0, #{a_seq})
+
+</insert>
+
+<insert id="finalPay" parameterType="map">
+INSERT ALL 
+INTO ORDERLIST (ORDERNUM,ID, ITEMS, SNAME,SNUM,PAY_DATE, PAY_PRICE, R_CHECK, BUBBLE, REFUND) VALUES(#{orderNum},#{id},#{items},#{sname},#{snum}, sysdate, #{pay_price}, 'N', #{bubble}, 'N')
+
+INTO PROCESS (ID, ORDERNUM, WAIT, OK, PICK, WASH, FINISH,REFUNDDATE) VALUES(#{id}, #{orderNum}, sysdate, null, null,null, null,null)
+
+select * from DUAL
+</insert>
+
+<delete id="cartChk">
+
+delete from cart where CHOICE='Y' and id=#{id}
+
+</delete>
+
+<insert id="bubblefinal">
+<selectKey resultType="int" keyProperty="b_seq" order="BEFORE">
+select NVL(MAX(b_seq) + 1, 1) from Bubble 
+
+</selectKey>
+INSERT INTO BUBBLE (id,b_price, B_DATE,b_seq,bubble,p_bubble,b_bubble) VALUES(#{id},0, sysdate,#{b_seq},#{bubble},#{p_bubble},0)
+
+</insert>
+
+
+<insert id="orderAcc">
+<selectKey resultType="int" keyProperty="a_seq" order="BEFORE">
+select NVL(MAX(A_SEQ) + 1, 1) from ACCOUNT 
+
+</selectKey>
+INSERT INTO ACCOUNT (BALANCE, A_DATE, I_PRICE, DETAIL, ID, O_PRICE, A_SEQ) VALUES(#{balance}, sysdate, #{i_price}, '상품결제', #{id}, 0, #{a_seq})
+
+</insert>
+
+<select id="payCheck" resultType="com.hk.saeyan.dto.OrderList">
+
+SELECT * FROM (
+      SELECT *
+ FROM orderList 
+      ORDER BY pay_date DESC)
+   WHERE ROWNUM BETWEEN  1 AND #{ret} AND id=#{id}
+</select>
+
+   <select id="reviewList" resultType="com.hk.saeyan.dto.Review" parameterType="String">
+
+      SELECT
+
+      r_no, r_CONTENT, w_ID, r_date, snum, star, badCnt
+      FROM review WHERE snum = #{snum} ORDER BY r_date desc
+
+   </select>
+
+
+</mapper>

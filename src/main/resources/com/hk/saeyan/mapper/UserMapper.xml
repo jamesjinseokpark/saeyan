@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hk.saeyan.mapper.UserMapper">
+
+	<select id="selectUserOne" resultType="com.hk.saeyan.dto.Members">
+		<!-- SELECT m.id,pwd,name,cardcom FROM MEMBERS m,personalpay p WHERE m.ID=p.id 
+			AND m.id=#{id} -->
+		SELECT * from members where id=#{id}
+	</select>
+
+	<select id="selectUserPay"
+		resultType="com.hk.saeyan.dto.PersonalPay">
+		<!-- SELECT m.id,pwd,name,cardcom FROM MEMBERS m,personalpay p WHERE m.ID=p.id 
+			AND m.id=#{id} -->
+		SELECT * from personalPay where id=#{id}
+	</select>
+
+	<update id="userUpdate"
+		parameterType="com.hk.saeyan.dto.UserInfo">
+		update members set
+		pwd=#{pwd},name=#{name},email=#{email},pnum=#{pnum},userZipCode=#{userZipCode},
+		userFirstAddr=#{userFirstAddr},userSecondAddr=#{userSecondAddr},userExtraAddr=#{userExtraAddr}
+		where id = #{id}
+	</update>
+
+	<insert id="insertCard"
+		parameterType="com.hk.saeyan.dto.UserInfo">
+		INSERT INTO PERSONALPAY (ID, CARDCOM, CARDNUM, CARDEXP, CARDCVC)
+		VALUES (#{id}, #{cardCom}, #{cardNum}, #{cardExp}, #{cardCvc})
+	</insert>
+
+	<update id="updateCardCheck" parameterType="com.hk.saeyan.dto.UserInfo">
+		UPDATE MEMBERS SET CARDCHECK='Y'
+		WHERE ID=#{id}
+	</update>
+
+	<update id="payUpdate"
+		parameterType="com.hk.saeyan.dto.PersonalPay">
+		update personalpay set cardcom=#{cardCom} ,cardnum=#{cardNum},
+		cardexp=#{cardExp}, cardcvc=#{cardCvc} where id =#{id}
+	</update>
+
+	<delete id="cardDelete" parameterType="String" >
+		DELETE FROM PERSONALPAY
+		WHERE ID=#{id}
+	</delete>
+
+	<update id="updateCardCheckToN" parameterType="String">
+		UPDATE MEMBERS SET CARDCHECK='N' WHERE ID=#{id}
+	</update>
+
+	<select id="deleteUserOne" resultType="com.hk.saeyan.dto.Members">
+		SELECT * FROM MEMBERS WHERE ID=#{ID}
+	</select>
+
+
+	<update id="userDeleterPost"
+		parameterType="com.hk.saeyan.dto.Members">
+		UPDATE MEMBERS SET UDCHECK='Y', REASON=#{reason} where ID=#{id}
+	</update>
+
+	<select id="bubbleList" resultType="com.hk.saeyan.dto.Bubble">
+
+		select m.id,b_price,bubble,b_date,p_bubble,b_bubble,b_seq from members
+		m,bubble b where m.id=b.id and m.id=#{id} ORDER BY B_DATE DESC
+
+	</select>
+
+	<select id="orderList" resultType="com.hk.saeyan.dto.OrderList">
+		select m.id, o.ordernum, o.sname, o.pay_date from members m,orderlist o where m.id=o.id and
+		m.id=#{id}
+
+	</select>
+
+	<select id="myOrderList"
+		resultType="com.hk.saeyan.dto.OrderProcess">
+		select
+		o.id,o.ordernum,sname,snum,items,pay_price,pay_date,wait,ok,pick,wash,finish,REFUNDDATE, r_check,o.bubble
+		from orderlist o,process p where o.ordernum=p.ordernum and
+		o.ordernum=#{orderNum}
+	</select>
+	
+	<!-- 환불 orderList  -->
+	<update id="refundCheck" parameterType="com.hk.saeyan.dto.OrderProcess">
+	
+	update orderList set refund='Y' where orderNum=#{orderNum}
+	
+	</update>
+	
+	<update id="refundPro"  parameterType="com.hk.saeyan.dto.OrderProcess">
+	
+	update process set refundDate=sysdate where orderNum=#{orderNum}
+	
+	</update>
+	
+	<insert id="accRefunt">
+	<selectKey resultType="int" keyProperty="a_seq" order="BEFORE">
+	select NVL(MAX(a_seq) + 1, 1) from Account 
+
+	</selectKey>
+
+	INSERT INTO ACCOUNT (BALANCE, A_DATE, I_PRICE, DETAIL, ID, O_PRICE, A_SEQ) VALUES(#{balance}, sysdate, 0, '환불', #{id},#{o_price}, #{a_seq})
+	
+	
+	</insert>
+
+	<!-- 게시글 등록 -->
+	<insert id="write">
+
+		INSERT INTO CHAT (W_ID, C_NO, C_DATE, C_CONTENT,
+		G_CHECK,
+		C_TITLE)
+		VALUES(#{w_id}, CHAT_seq.nextval, sysdate,
+		#{c_content} , #{g_check},
+		#{c_title} )
+
+	</insert>
+
+	<!-- 게시글 목록 -->
+	<select id="list" resultType="com.hk.saeyan.dto.Chat"
+		parameterType="com.hk.saeyan.dto.Criteria">
+		SELECT w_id, c_no, c_date, c_content, c_title, g_check,c_cnt,
+		snum
+		FROM
+		(SELECT w_id,
+		c_no, c_date, c_content, c_title, g_check, snum, c_cnt,
+		row_number()
+		over(ORDER
+		BY c_no DESC) as rnum FROM chat) WHERE
+		w_id=#{logId} and snum is null
+		ORDER BY c_no DESC
+	</select>
+
+	<!-- 게시글 총 개수 -->
+	<select id="listCount"
+		parameterType="com.hk.saeyan.dto.SearchCriteria" resultType="int">
+
+		SELECT COUNT(c_no)
+		FROM CHAT
+		WHERE 1 = 1
+		<include refid="search"></include>
+		And c_no > 0
+	</select>
+
+	<sql id="search">
+		<if test="searchType != null">
+			<if test="searchType == 't'.toString()">AND TITLE LIKE '%' || #{keyword} || '%'</if>
+			<if test="searchType == 'c'.toString()">AND CONTENT LIKE '%' || #{keyword} || '%'</if>
+			<if test="searchType == 'w'.toString()">AND WRITER LIKE '%' || #{keyword} || '%'</if>
+			<if test="searchType == 'tc'.toString()">AND (TITLE LIKE '%' || #{keyword} || '%') or (CONTENT
+				LIKE '%' || #{keyword} || '%')</if>
+		</if>
+	</sql>
+
+	<!-- 게시글 상세조회 -->
+
+	<select id="selectOne" parameterType="int"
+		resultType="com.hk.saeyan.dto.Chat">
+
+		SELECT w_id, c_no, c_date, c_content, c_title, g_check FROM
+		CHAT
+		where c_no = #{c_no}
+
+	</select>
+
+	<!-- 게시글 수정 -->
+	<update id="update" parameterType="com.hk.saeyan.dto.Chat">
+
+		UPDATE CHAT SET W_ID=#{w_id},
+		g_CHECK=#{g_check},
+		C_CONTENT=#{c_content}, C_TITLE=#{c_title} WHERE
+		C_NO= #{c_no}
+
+	</update>
+
+	<!-- 게시글 삭제 -->
+
+	<delete id="delete" parameterType="int">
+
+		DELETE FROM CHAT WHERE c_no =
+		#{c_no}
+
+	</delete>
+
+	<!-- 댓글 조회하기 1012 새로 추가 -->
+	<select id="readComment"
+		resultType="com.hk.saeyan.dto.ChatComment">
+
+		SELECT com_no, com_content, r_id,
+		com_date FROM CHATCOMMENT
+		WHERE c_no =#{c_no}
+
+	</select>
+
+
+	<select id="schatList" resultType="com.hk.saeyan.dto.Chat"
+		parameterType="com.hk.saeyan.dto.Criteria">
+		SELECT w_id, c_no, c_date, c_content, c_title, snum , sname, c_cnt
+		FROM
+		(SELECT w_id,
+		c_no, c_date, c_content, c_title, snum, sname, c_cnt,
+		row_number()
+		over(ORDER
+		BY c_no DESC) as rnum FROM chat) WHERE w_id=#{logId} and
+		snum is not null
+		ORDER BY c_no DESC
+	</select>
+
+
+	<insert id="schatWrite">
+
+		INSERT INTO CHAT (W_ID, C_NO, C_DATE,
+		C_CONTENT,g_check, snum,
+		C_TITLE)
+		VALUES(#{w_id}, CHAT_seq.nextval,
+		sysdate,
+		#{c_content} ,#{g_check}, #{snum},
+		#{c_title} )
+
+	</insert>
+	
+			<update id="updateU" parameterType="com.hk.saeyan.dto.Chat">
+
+		UPDATE CHAT SET W_ID=#{w_id},
+		snum=#{snum}, g_chaeck = #{g_check},
+		C_CONTENT=#{c_content}, C_TITLE=#{c_title} WHERE
+		C_NO= #{c_no}
+
+	</update>
+
+	<!-- 게시글 삭제 -->
+
+	<delete id="deleteU" parameterType="int">
+
+		DELETE FROM CHAT WHERE c_no =
+		#{c_no}
+
+	</delete>
+	
+	
+
+	<select id="reviewListU" resultType="com.hk.saeyan.dto.Review"
+		parameterType="String">
+
+		SELECT
+
+		orderNum, r_no, r_CONTENT, w_ID, r_date, snum, star
+		star, badCnt
+		FROM review WHERE w_id=#{logId} ORDER BY r_date desc
+
+	</select>
+	
+
+
+
+</mapper>

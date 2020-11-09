@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+
+    PUBLIC "-//mybatis.org/DTD Mapper 3.0//EN"
+
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+
+<mapper namespace="com.hk.saeyan.mapper.ReviewMapper">
+
+	<select id="rList" resultType="com.hk.saeyan.dto.Review">
+
+		SELECT
+
+		orderNum, r_no, r_CONTENT, w_ID, r_date, snum, star, badCnt
+		FROM review ORDER BY r_date desc
+
+	</select>
+
+	<insert id="rWrite" parameterType="com.hk.saeyan.dto.Review">
+
+		INSERT INTO review
+		(orderNum,
+		r_no
+		,r_CONTENT, w_ID, R_DATE,snum, star)
+		VALUES (
+		#{orderNum}
+		,review_seq.nextval
+		, #{r_content}
+		,#{w_id}
+		, sysdate,#{snum},#{star})
+
+	</insert>
+	
+	<update id="rCheckup">
+	
+	UPDATE ORDERLIST SET R_CHECK='Y' WHERE ORDERNUM=#{orderNum}
+	
+	</update>
+	
+
+</mapper>

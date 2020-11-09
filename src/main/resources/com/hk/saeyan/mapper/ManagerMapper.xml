@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hk.saeyan.mapper.ManagerMapper">
+
+	<select id="memberList" resultType="com.hk.saeyan.dto.Members">
+		SELECT * FROM MEMBERS
+	</select>
+
+	<select id="pwdCheck" parameterType="String"
+		resultType="com.hk.saeyan.dto.Members">
+		SELECT * FROM MEMBERS where id=#{id} and pwd=#{pwd}
+	</select>
+
+	<insert id="storeAdd">
+		INSERT INTO STORES (ID, SNAME, SCONTACT, SNUM, BANK,
+		BNUM, PERMIT, S_DATE, 
+		SDCHECK, AREA_NUM, STOREFIRSTADDR,
+		STORESECONDADDR, STOREEXTRAADDR,
+		STOREZIPCODE, SP1, SP2, SP3, SP4)
+		VALUES(#{id},
+		#{sname},#{scontact}, #{snum}, #{bank}, #{bnum}, 'N', sysdate, 'N',
+		#{area_num}, #{storeFirstAddr} , #{storeSecondAddr},
+		#{storeExtraAddr}, #{storeZipCode}, #{sp1}, #{sp2}, #{sp3}, #{sp4})
+	</insert>
+
+	<insert id="mapDataAdd" parameterType="com.hk.saeyan.dto.ManagerInfo">
+		<selectKey resultType="int" keyProperty="mno" order="BEFORE" >
+			SELECT MAX(mno)+1 FROM MAPDATA
+		</selectKey>
+			INSERT INTO MAPDATA (MNO, SNUM, SADDRESS) 
+			VALUES (#{mno}, #{snum}, #{saddress})
+	</insert>
+	
+	<insert id="mapDataUpdate" parameterType="com.hk.saeyan.dto.StoreInfo">
+		UPDATE MAPDATA SET SADDRESS=#{saddress}
+		WHERE SNUM=#{snum}
+	</insert>
+
+	<insert id="itemListAdd">
+		INSERT INTO ITEMLIST (SNUM, ITEMS)
+		VALUES(#{snum}, #{items})
+	</insert>
+
+	<select id="myStoresList" resultType="com.hk.saeyan.dto.Stores">
+		SELECT * FROM STORES WHERE
+		ID=#{ID} AND SDCHECK='N'
+	</select>
+
+	<select id="selectStoreOne" parameterType="String"
+		resultType="com.hk.saeyan.dto.StoreInfo">
+		SELECT s.ID , s.SNAME , STOREFIRSTADDR, STORESECONDADDR,
+		STOREEXTRAADDR,
+		STOREZIPCODE, i.snum, scontact,bank,
+		bnum,permit,s_date,area_num,i.items, s.sp1, s.sp2, s.sp3, s.sp4 FROM ITEMLIST i,STORES
+		s WHERE i.SNUM = s.SNUM AND
+		i.snum=#{snum}
+
+	</select>
+
+	<update id="storeUpdate"
+		parameterType="com.hk.saeyan.dto.StoreInfo">
+		UPDATE STORES SET SNAME=#{sname},
+		STOREFIRSTADDR=#{storeFirstAddr}
+		,STORESECONDADDR= #{storeSecondAddr},
+		STOREEXTRAADDR=#{storeExtraAddr},STOREZIPCODE=#{storeZipCode},
+		SCONTACT=#{scontact}, BANK=#{bank}, BNUM=#{bnum}, AREA_NUM=#{area_num},
+		SP1=#{sp1}, SP2=#{sp2}, SP3=#{sp3}, SP4=#{sp4}
+		WHERE SNUM=#{snum}
+	</update>
+
+	<update id="itemListUpdate"
+		parameterType="com.hk.saeyan.dto.StoreInfo">
+		
+		UPDATE ITEMLIST SET ITEMS=#{items} WHERE SNUM=#{snum}
+			
+	</update>
+
+	<update id="storeDelete">
+		UPDATE STORES SET sdcheck='Y' where SNUM=#{snum}
+	</update>
+
+	<select id="selectMemberOne"
+		resultType="com.hk.saeyan.dto.Members">
+		SELECT * FROM MEMBERS WHERE ID=#{ID}
+	</select>
+
+	<update id="ownerUpdate"
+		parameterType="com.hk.saeyan.dto.Members">
+		UPDATE MEMBERS SET NAME=#{name}, PWD=#{pwd},
+		EMAIL=#{email},USERZIPCODE=#{userZipCode},USERFIRSTADDR=#{userFirstAddr},USERSECONDADDR=#{userSecondAddr},USEREXTRAADDR=#{userExtraAddr},
+		PNUM=#{pnum}, GRADE='2' WHERE ID=#{id}
+	</update>
+
+	<update id="ownerDeleterPost" parameterType="String">
+		UPDATE MEMBERS SET
+		UDCHECK='Y' where ID=#{id}
+	</update>
+
+	<select id="managerOrderList"
+		resultType="com.hk.saeyan.dto.OrderProcess">
+		SELECT o.ORDERNUM, o.ID , o.SNUM , o.SNAME , o.PAY_DATE ,
+		o.PAY_PRICE ,
+		o.R_CHECK , o.BUBBLE , m.NAME, m.USERFIRSTADDR
+		,m.USERSECONDADDR ,m.USEREXTRAADDR ,m.USERZIPCODE, m.PNUM ,p.WAIT
+		,p.OK , p.PICK , p.WASH , p.FINISH,p.REFUNDDATE, o.items FROM ORDERLIST o , MEMBERS
+		m , PROCESS p WHERE o.ORDERNUM = p.ORDERNUM AND o.ID = m.ID AND
+		snum=#{snum}
+	</select>
+
+	<select id="managerOrderInfo"
+		resultType="com.hk.saeyan.dto.OrderProcess">
+		SELECT o.ORDERNUM, o.ID , o.SNUM , o.SNAME , o.PAY_DATE ,
+		o.PAY_PRICE ,
+		o.R_CHECK , o.BUBBLE , m.NAME, m.USERFIRSTADDR
+		,m.USERSECONDADDR ,m.USEREXTRAADDR ,m.USERZIPCODE, m.PNUM ,p.WAIT
+		,p.OK , p.PICK , p.WASH , p.FINISH,p.REFUNDDATE, o.items FROM ORDERLIST o , MEMBERS
+		m , PROCESS p WHERE o.ORDERNUM = p.ORDERNUM AND o.ID = m.ID AND
+		o.ORDERNUM=#{orderNum}
+	</select>
+
+	<update id="managerProcess">
+		UPDATE PROCESS SET
+		<choose>
+			<when test="process != null and process.equals('접수중')">
+				WAIT=sysdate , OK=null, PICK=null, WASH=null, FINISH=null
+			</when>
+			<when test="process != null and process.equals('접수완료')">
+				OK=sysdate , PICK=null, WASH=null, FINISH=null
+			</when>
+			<when test="process != null and process.equals('수거완료')">
+				PICK=sysdate , WASH=null, FINISH=null
+			</when>
+			<when test="process != null and process.equals('세탁중')">
+				WASH=sysdate , FINISH=null
+			</when>
+			<when test="process != null and process.equals('배달완료')">
+				FINISH=sysdate
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+		WHERE ORDERNUM=#{orderNum}
+	</update>
+	<!-- <select id="aabbcc" resultType="com.hk.saeyan.dto.StatisticDay"> -->
+	<!-- SELECT CDAY, OQ,OP FROM STATISTIC s WHERE snum='13131313' -->
+	<!-- </select> -->
+	
+	<!-- review 관련 -->
+
+	<select id="reviewList" resultType="com.hk.saeyan.dto.Review"
+		parameterType="String">
+
+		SELECT
+
+		orderNum, r_no, r_CONTENT, w_ID, r_date, snum,
+		star, badCnt
+		FROM review WHERE snum = #{snum} ORDER BY r_date desc
+
+	</select>
+
+
+	<!-- chat 관련 -->
+
+	<update id="updateRplCnt" parameterType="int">
+
+		update chat c set c.c_cnt = (select count(com_no) from chatcomment where
+		c_no=#{c_no}) where c.c_no =#{c_cno}
+
+	</update>
+
+	<!-- 게시글 등록 -->
+	<insert id="write">
+
+		INSERT INTO CHAT (W_ID, C_NO, C_DATE, C_CONTENT,
+		G_CHECK,
+		C_TITLE)
+		VALUES(#{w_id}, CHAT_seq.nextval, sysdate,
+		#{c_content} , #{g_check},
+		#{c_title} )
+
+	</insert>
+
+	<!-- 게시글 목록 -->
+	<select id="list" resultType="com.hk.saeyan.dto.Chat"
+		parameterType="com.hk.saeyan.dto.Criteria">
+		SELECT w_id, c_no, c_date, c_content, c_title, g_check,
+		c_cnt
+		FROM
+		(SELECT w_id,
+		c_no, c_date, c_content, c_title, g_check,
+		c_cnt,
+		row_number()
+		over(ORDER
+		BY c_no DESC) as rnum FROM chat) WHERE
+		w_id=#{logId}
+		ORDER BY c_no DESC
+	</select>
+
+	<!-- 게시글 총 개수 -->
+	<select id="listCount"
+		parameterType="com.hk.saeyan.dto.SearchCriteria" resultType="int">
+
+		SELECT COUNT(c_no)
+		FROM CHAT
+		WHERE 1 = 1
+		<include refid="search"></include>
+		And c_no > 0
+	</select>
+
+	<sql id="search">
+		<if test="searchType != null">
+			<if test="searchType == 't'.toString()">AND TITLE LIKE '%' || #{keyword} || '%'</if>
+			<if test="searchType == 'c'.toString()">AND CONTENT LIKE '%' || #{keyword} || '%'</if>
+			<if test="searchType == 'w'.toString()">AND WRITER LIKE '%' || #{keyword} || '%'</if>
+			<if test="searchType == 'tc'.toString()">AND (TITLE LIKE '%' || #{keyword} || '%') or (CONTENT
+				LIKE '%' || #{keyword} || '%')</if>
+		</if>
+	</sql>
+
+	<!-- 게시글 상세조회 -->
+
+	<select id="selectOne" parameterType="int"
+		resultType="com.hk.saeyan.dto.Chat">
+
+		SELECT w_id, c_no, c_date, c_content, c_title, g_check FROM
+		CHAT
+		where c_no = #{c_no}
+
+	</select>
+
+	<!-- 게시글 수정 -->
+	<update id="update" parameterType="com.hk.saeyan.dto.Chat">
+
+		UPDATE CHAT SET W_ID=#{w_id},
+		g_CHECK=#{g_check},
+		C_CONTENT=#{c_content}, C_TITLE=#{c_title} WHERE
+		C_NO= #{c_no}
+
+	</update>
+
+	<!-- 게시글 삭제 -->
+
+	<delete id="delete" parameterType="int">
+
+		DELETE FROM CHAT WHERE c_no =
+		#{c_no}
+
+	</delete>
+
+	<!-- 댓글 조회하기 1009 새로 추가 -->
+	<select id="readComment"
+		resultType="com.hk.saeyan.dto.ChatComment">
+
+		SELECT com_no, com_content, r_id,
+		com_date FROM CHATCOMMENT
+		WHERE c_no =#{c_no}
+
+	</select>
+
+	<select id="schatList" resultType="com.hk.saeyan.dto.Chat"
+		parameterType="String">
+
+		SELECT
+
+		c_no, c_title, w_ID, c_date, snum, c_cnt
+		FROM chat WHERE
+		snum = #{snum} ORDER BY c_date desc
+
+	</select>
+
+	<insert id="writeComment">
+		INSERT INTO CHATCOMMENT(
+		C_NO
+		, COM_NO
+		, COM_CONTENT
+		,
+		R_ID
+		)
+		VALUES( #{c_no}
+		, CHATCOMMENT_SEQ.NEXTVAL
+		, #{com_content}
+		, #{r_id}
+		)
+	</insert>
+
+
+
+
+</mapper>
