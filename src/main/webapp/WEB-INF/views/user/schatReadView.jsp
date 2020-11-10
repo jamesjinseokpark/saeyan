@@ -45,71 +45,79 @@
 
 <body>
 
-	<div id="root">
-		<header>
-			<h1>문의게시판</h1>
-		</header>
+	<body>
 
-		<section id="container">
+	<!-- <div> -->
+	<%--<%@include file="nav.jsp"%> --%>
+	<!-- </div> -->
+
+	<%@ include file="../include/headerReal.jsp"%>
+
+	<script
+		src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+	<script src="https://code.jquery.com/jquery-3.5.1.js"
+		integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
+		crossorigin="anonymous"></script>
+
+	<div class="brd-bx">
+		<div class="inner">
 			<form name="readForm" method="post">
 				<input type="hidden" id="c_no" name="c_no" value="${selectOne.c_no}" />
 			</form>
-			<table>
-				<tbody>
-					<tr>
-						<td><label for="title">제목</label><input type="text"
-							id="title" name="c_title" value="${selectOne.c_title}"
-							readonly="readonly" /></td>
-					</tr>
-					<tr>
-						<td><label for="content">내용</label> <textarea id="content"
-								name="c_content" readonly="readonly"><c:out
-									value="${selectOne.c_content}" /></textarea></td>
-					</tr>
-					<tr>
-						<td><label for="writer">작성자</label><input type="text"
-							id="writer" name="w_id" value="${selectOne.w_id}"
-							readonly="readonly" /></td>
-					</tr>
-
-					<tr>
-						<td><label for="writer">회원등급</label><input type="text"
-							id="grade" name="g_check" value="${selectOne.g_check}"
-							readonly="readonly" /></td>
-					</tr>
-
-
-					<tr>
-						<td><label for="sysdate">작성날짜</label> <fmt:formatDate
-								value="${selectOne.c_date}" pattern="yyyy-MM-dd" /></td>
-					</tr>
-				</tbody>
-			</table>
-			<div>
-				<button type="submit" class="update_btn">수정</button>
-				<button type="submit" class="delete_btn">삭제</button>
-				<button type="submit" class="list_btn">목록</button>
-			</div>
-
-			<!-- 댓글목록 1009 추가 james-->
-			<div id="comment">
-				<ol class="commentList">
-					<c:forEach items="${commentList}" var="commentList">
-						<li>
-							<p>
-								작성자 : ${commentList.r_id}<br /> 작성 날짜 :
-								<fmt:formatDate value="${commentList.com_date}"
-									pattern="yyyy-MM-dd" />
-							</p>
-
-							<p>${commentList.com_content}</p>
-						</li>
-					</c:forEach>
-				</ol>
-			</div>
-
-		</section>
-		<hr />
-	</div>
+			<div class="write-bx">
+				<div class="rows">
+					<span class="tit-tx m-12">제목<i class="req">필수</i></span>
+					<div class="con-tx m-12">${selectOne.c_title}</div>
+				</div>
+				<div class="rows">
+					<span class="tit-tx m-12">내용<i class="req">필수</i></span>
+					<div class="con-tx m-12" id="remaining">
+						<textarea class="textarea block" rows="10" name="cv_contents"
+							id="cv_contents" required="required" title="내용을 입력해 주세요"
+							readonly="readonly">${selectOne.c_content}</textarea>
+					</div>
+				</div>
+				<div class="rows">
+					<span class="tit-tx m-5">작성자</span>
+					<div class="con-tx m-7">${selectOne.w_id}</div>
+				</div>
+				<div class="rows">
+					<span class="tit-tx">회원등급<i class="req">필수</i></span>
+					<div class="con-tx">
+						<span class="m-rows">${selectOne.g_check}</span>
+					</div>
+				</div>
+				<div class="rows">
+					<span class="tit-tx m-5">작성날짜</span>
+					<div class="con-tx m-7">
+						<fmt:formatDate value="${selectOne.c_date}" pattern="yyyy-MM-dd" />
+					</div>
+				</div>
+				<div class="rows">
+					<div class="btn-box">
+						<a href="#" class="btn btn-default1 btn-lg update_btn">수정</a> <a
+							href="#" class="btn btn-default1 btn-lg delete_btn">삭제</a> <a
+							href="#" class="btn btn-default1 btn-lg list_btn">목록</a>
+					</div>
+				</div>
+				<%int i=1; %>
+				<c:forEach items="${commentList}" var="commentList">
+					<div class="rows">
+						<span class="tit-tx m-5"><%=i %><i class="req">필수</i></span>
+						<div class="con-tx m-7" id="remaining">
+							<pre class="textarea block" rows="10" name="cv_contents"
+								id="cv_contents" required="required" title="내용을 입력해 주세요"
+								readonly="readonly">
+								<p>작성자 : ${commentList.r_id}</p>
+								<p>작성 날짜 :<fmt:formatDate value="${commentList.com_date}"
+										pattern="yyyy-MM-dd" />
+								</p>
+								<p>내용 :${commentList.com_content}</p>
+							</pre>
+						</div>
+					</div>
+					<%i++; %>
+				</c:forEach>
+		
 </body>
 </html>

@@ -7,101 +7,11 @@
 <%
 	OrderProcess orderPro = (OrderProcess) request.getAttribute("myOrderList");
 %>
-<%-- <%@ include file="../include/headerReal.jsp"%> --%>
+<%@ include file="../include/headerReal.jsp"%>
 <script src="https://code.jquery.com/jquery-3.5.1.js"
 	integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
 	crossorigin="anonymous"></script>
 <script src="http://code.jquery.com/ui/1.11.0/jquery-ui.js"></script>
-<style type="text/css">
-/* .tdn { */
-/* 	cursor: pointer; */
-/* } /* 마우스 포인터가 손가락 모양으로 바꿈*/ */
-
-
-/*-- POPUP common style S ======================================================================================================================== --*/
-#mask {
-	position: absolute;
-	left: 0;
-	top: 0;
-	z-index: 999;
-	background-color: #000000;
-	display: none;
-}
-
-.layerpop {
-	display: none;
-	z-index: 1000;
-	border: 2px solid #ccc;
-	background: #fff;
-	/* 	cursor: move; */
-}
-
-.layerpop_area .title {
-	padding: 10px 10px 10px 10px;
-	border: 0px solid #aaaaaa;
-	background: #f1f1f1;
-	color: #3eb0ce;
-	font-size: 1.3em;
-	font-weight: bold;
-	line-height: 24px;
-}
-
-.layerpop_area .layerpop_close {
-	width: 25px;
-	height: 25px;
-	display: block;
-	position: absolute;
-	top: 10px;
-	right: 10px;
-	background: transparent url('/resources/images/btn_exit_off.png') no-repeat;
-}
-
-.layerpop_area .layerpop_close:hover {
-	background: transparent url('/resources/images/btn_exit_on.png') no-repeat;
-	cursor: pointer;
-}
-
-.layerpop_area .content {
-	width: 96%;
-	margin: 2%;
-	color: #828282;
-}
-
-#target1 {
-	color: #2C952C;
-	text-align: center;
-	padding: 15px;
-}
-
-.star_rating {
-	font-size: 0;
-	letter-spacing: -4px;
-}
-
-.star_rating a {
-	font-size: 22px;
-	letter-spacing: 0;
-	display: inline-block;
-	margin-left: 5px;
-	color: #ccc;
-	text-decoration: none;
-}
-
-.starRev span:first-child {
-	margin-left: 0;
-}
-
-.starRev span.on {
-	color: red;
-}
-/*-- POPUP common style E --*/
-
-.btn-default2 {
-    background: rgba(100,100,100,0);
-    color: #333;
-    border: #333 1px solid;
-}
-</style>
 
 <script>
 	function wrapWindowByMask() {
@@ -163,7 +73,7 @@
 			$(this).parent().children('span.on').removeClass('on');
 			$(this).addClass('on').prevAll('span').addClass('on');
 			var bb = $(this).attr('data-value');
-			alert(bb+'점 선택!')
+			alert(bb + '점 선택!')
 			$("#point").val(bb); // 히든 인풋에 값 저장.
 			return false;
 		});
@@ -178,53 +88,166 @@
 		}
 	}
 
-
-
-	$(document).on("click", "#refund", function(){
+	$(document).on("click", "#refund", function() {
 		console.log("들어오냐");
-			var re=$('#refun').val();
-			var id=$('#userid').val();
-			var orderNum=$('#ordernum').val();
-			var i_price=$('#price').val();
-			var bubble=$('#bub').val();
-			console.log(re);
-			if(!$('#refun').val()==false){
-				console.log("들어오냐22");
-	 			alert("접수완료로 환불 할 수 없습니다");
-	 			}
+		var re = $('#refun').val();
+		var id = $('#userid').val();
+		var orderNum = $('#ordernum').val();
+		var i_price = $('#price').val();
+		var bubble = $('#bub').val();
+		console.log(re);
+		if (!$('#refun').val() == false) {
+			console.log("들어오냐22");
+			alert("접수완료로 환불 할 수 없습니다");
+		}
 
-			if($('.pro').val()==="환불완료"){
-				alert("환불이 완료된 상태입니다");
-				return false;
-			}
-			
-			else{$.ajax({
-        			data: {
-        				id :id,
-        				orderNum :orderNum,
-        				i_price :i_price,
-        				bubble : bubble
-        			},
-        			url:"/order/refundCheck",
-        			dataType:'json',
-        			method:'POST',
-        			success:function(data){
-        				
-        				alert("환불완료되었습니다.");
-        				$("#maindiv").load(window.location.href + "#maindiv");
-        				
-        			},
-        			error:function(data){
-        				alert("에러가 발생했습니다.");
-        				return false;
-        			}
-        			
-        		});
-			}
+		if ($('.pro').val() === "환불완료") {
+			alert("환불이 완료된 상태입니다");
+			return false;
+		}
+
+		else {
+			$.ajax({
+				data : {
+					id : id,
+					orderNum : orderNum,
+					i_price : i_price,
+					bubble : bubble
+				},
+				url : "/order/refundCheck",
+				dataType : 'json',
+				method : 'POST',
+				success : function(data) {
+
+					alert("환불완료되었습니다.");
+					$("#maindiv").load(window.location.href + "#maindiv");
+
+				},
+				error : function(data) {
+					alert("에러가 발생했습니다.");
+					return false;
+				}
+
+			});
+		}
 	});
-
-	
 </script>
+
+
+<style type="text/css">
+/* .tdn { */
+/* 	cursor: pointer; */
+/* } /* 마우스 포인터가 손가락 모양으로 바꿈*/
+* /
+	/*-- POPUP common style S ======================================================================================================================== --*/
+	
+	
+	
+#mask {
+	position: absolute;
+	left: 0;
+	top: 0;
+	z-index: 999;
+	background-color: #000000;
+	display: none;
+}
+
+.layerpop {
+	display: none;
+	z-index: 1000;
+	border: 2px solid #ccc;
+	background: #fff;
+	align: left;
+	height: 400px;
+	/* 	cursor: move; */
+}
+
+.layerpop_area .title {
+	padding: 10px 10px 10px 10px;
+	border: 0px solid #aaaaaa;
+	background: #f1f1f1;
+	color: #3eb0ce;
+	font-size: 1.3em;
+	font-weight: bold;
+	line-height: 24px;
+	text-align: left;
+}
+
+.layerpop_area .layerpop_close {
+	width: 25px;
+	height: 25px;
+	display: block;
+	position: absolute;
+	top: 10px;
+	right: 10px;
+	background: transparent url('/resources/images/btn_exit_off.png')
+		no-repeat;
+}
+
+.layerpop_area .layerpop_close:hover {
+	background: transparent url('/resources/images/btn_exit_on.png')
+		no-repeat;
+	cursor: pointer;
+}
+
+.layerpop_area .content {
+	width: 80%;
+	margin: 2%;
+	height: 400px;
+	color: #828282;
+	text-align: left;
+	align: left;
+}
+
+/* #target1 { */
+/* 	color: #2C952C; */
+/* 	text-align: center; */
+/* 	padding: 15px; */
+/* } */
+.star_rating {
+	font-size: 0;
+	letter-spacing: -4px;
+}
+
+.star_rating a {
+	font-size: 22px;
+	letter-spacing: 0;
+	display: inline-block;
+	margin-left: 5px;
+	color: #ccc;
+	text-decoration: none;
+}
+
+.starRev span:first-child {
+	margin-left: 0;
+}
+
+.starRev span.on {
+	color: red;
+}
+/*-- POPUP common style E --*/
+.btn-default2 {
+	background: rgba(100, 100, 100, 0);
+	color: #333;
+	border: #333 1px solid;
+}
+
+#formcs {
+	text-indent: 5px;
+	text-align: left;
+	align: left;
+}
+
+#noresize {
+	resize: none;
+	width: 540px;
+	height: 50px
+}
+</style>
+
+
+
+
 <div id="container">
 	<div id="content" class="brd-wr">
 		<div class="tit-area">
@@ -232,74 +255,75 @@
 		</div>
 		<div class="brd-bx">
 			<div class="inner">
-				<h3 class="h3-tit fir">
-					<span>주문 상세정보</span>
-				</h3>
+				<h3 class="h3-tit fir"></h3>
 				<div class="write-bx">
 					<div class="rows">
-						<span class="tit-tx m-4">
-							<b>주문번호</b>
+						<span class="tit-tx m-4"> <b>주문번호</b>
 						</span>
 						<div class="con-tx m-8">
 							<c:set var="itemStr" value="${myOrderList.items}" />
 							<c:set var="itemStr" value="${fn:replace(itemStr, '!@#', ':')}" />
 							<c:set var="itemStr" value="${fn:replace(itemStr, '$%^', '개 ')}" />
-							<c:set var="itemStr" value="${fn:substring(itemStr, 0, fn:length(itemStr)-1)}" />
+							<c:set var="itemStr"
+								value="${fn:substring(itemStr, 0, fn:length(itemStr)-1)}" />
 							<span class="input p-4 m-12" style="font-size: 20px;">${myOrderList.orderNum}</span>
-							<input type='hidden' id="ordernum" value='${myOrderList.orderNum}' readonly>
+							<input type='hidden' id="ordernum"
+								value='${myOrderList.orderNum}' readonly>
 						</div>
 					</div>
+					<br>
 					<div class="rows">
-						<span class="tit-tx m-4">
-							<b>아이디</b>
+						<span class="tit-tx m-4"> <b>아이디</b>
 						</span>
 						<div class="con-tx m-8">
 							<span class="input p-4 m-12" style="font-size: 20px;">${myOrderList.id}</span>
 							<input type='hidden' id="userid" value='${myOrderList.id}'>
 						</div>
 					</div>
+					<br>
 					<div class="rows">
-						<span class="tit-tx m-4">
-							<b>품목</b>
+						<span class="tit-tx m-4"> <b>품목</b>
 						</span>
 						<div class="con-tx m-8">
 							<span class="input p-4 m-12" style="font-size: 20px;">${itemStr}</span>
 							<input type='hidden' class='item' value='${itemStr}'>
 						</div>
 					</div>
+					<br>
 					<div class="rows">
-						<span class="tit-tx m-4">
-							<b>결제금액</b>
+						<span class="tit-tx m-4"> <b>결제금액</b>
 						</span>
 						<div class="con-tx m-8">
 							<span class="input p-4 m-12" style="font-size: 20px;">${myOrderList.pay_price}원</span>
 							<input type='hidden' id="price" value='${myOrderList.pay_price}'>
 						</div>
 					</div>
+					<br>
 					<div class="rows">
-						<span class="tit-tx m-4">
-							<b>글제일</b>
+						<span class="tit-tx m-4"> <b>결제일</b>
 						</span>
 						<div class="con-tx m-8">
-							<span class="input p-4 m-12" style="font-size: 20px;"><fmt:formatDate value='${myOrderList.pay_date}' type='both' pattern='yyyy.MM.dd(E)(a)hh:mm:ss' /></span>
+							<span class="input p-4 m-12" style="font-size: 20px;"><fmt:formatDate
+									value='${myOrderList.pay_date}' type='both'
+									pattern='yyyy.MM.dd(E)(a)hh:mm:ss' /></span>
 						</div>
 					</div>
+					<br>
 					<div class="rows">
-						<span class="tit-tx m-4">
-							<b>세탁 진행상황</b>
+						<span class="tit-tx m-4"> <b>세탁 진행상황</b>
 						</span>
 						<div class="con-tx m-8">
 							<%
 								String process = "";
 							%>
 							<c:choose>
-							
+
 								<c:when test="${myOrderList.refundDate ne null}">
 									<%
 										process = "환불완료";
 									%>
 								</c:when>
-							
+
 								<c:when test="${myOrderList.finish ne null}">
 									<%
 										process = "배달완료";
@@ -328,135 +352,138 @@
 							</c:choose>
 							<span class="input p-4 m-12" style="font-size: 20px;"><%=process%></span>
 							<input type='hidden' value='<%=process%>' class='pro' readonly><br>
-							<input type="hidden" id="refun" value="${myOrderList.ok }" />
-							<input type="hidden" id="bub" value="${myOrderList.bubble }" />
+							<input type="hidden" id="refun" value="${myOrderList.ok }" /> <input
+								type="hidden" id="bub" value="${myOrderList.bubble }" />
 						</div>
 					</div>
 				</div>
+				<br>
 				<div class="btn-box">
-				<button type="button" id="refund" class="btn btn-default2 btn-lg">환불하기</button>
-				<button class='tdn btn btn-default2 btn-lg'>전화면으로</button>
-<!-- 				<div id='detail'></div>	 -->
+					<button type="button" id="refund" class="btn btn-default2 btn-lg">환불하기</button>
+					<button class='tdn btn btn-default2 btn-lg'>전화면으로</button>
+					<!-- 				<div id='detail'></div>	 -->
 					<!--Popup Start -->
-	<c:choose>
-		<c:when test="${myOrderList.finish ne null && myOrderList.r_check eq 'N'  }">
+					<c:choose>
+						<c:when
+							test="${myOrderList.finish ne null && myOrderList.r_check eq 'N'  }">
 
 
-			<button onClick="javascript:goDetail('테스트');" class="btn btn-blue btn-lg">리뷰 작성하기</button>
-			
-<!-- 			<div style="height: 1000px;"></div> -->
+							<button onClick="javascript:goDetail('테스트');"
+								class="btn btn-blue btn-lg">리뷰 작성하기</button>
 
-			<!-- 팝업뜰때 배경 -->
-			<div id="mask"></div>
+					
 
-
-			<div id="layerbox" class="layerpop"
-				style="width: 700px; height: 350px;">
-				<article class="layerpop_area">
-					<div class="title">리뷰 작성하기</div>
-					<a href="javascript:popupClose();" class="layerpop_close"
-						id="layerbox_close"></a> <br>
+							<!-- 팝업뜰때 배경 -->
+							<div id="mask"></div>
 
 
-					<form name="writeForm" method="post" action="/review/rWrite">
-						<table>
-							<tbody>
-							
-								<tr>
-									<td><label for="title">업체명</label><input type="text"
-										id="orderNum" name="sname" class="chk" title="주문번호를 입력하세요"
-										value="${myOrderList.sname}" placeholder="주문번호를 입력하세요"  readOnly/></td>
-								</tr>
+							<div id="layerbox" class="layerpop"
+								style="width: 550px; height: 330px;">
+								<article class="layerpop_area">
+									<div class="title">리뷰 작성하기</div>
+									<a href="javascript:popupClose();" class="layerpop_close"
+										id="layerbox_close"></a> <br>
 
-								<tr>
-									<td><label for="title">주문번호</label><input type="text"
-										id="orderNum" name="orderNum" class="chk" title="주문번호를 입력하세요"
-										value="${myOrderList.orderNum}" placeholder="주문번호를 입력하세요" /></td>
-								</tr>
-								<tr>
-									<td><label for="content">내용</label> <textarea
-											id="r_content" name="r_content" class="chk"
-											title="내용을 입력하세요." placeholder="내용을 입력해주세요"></textarea></td>
-								</tr>
-								<tr>
-									<td><label for="writer">작성자</label><input type="text"
-										id="writer" name="w_id" placeholder="ID가져올 예정"
-										value="${loginMember.id}" readOnly/></td>
-								<tr>
-								<tr>
-									<td><label for="writer"></label><input type="hidden"
-										id="snum" name="snum" value='${myOrderList.snum}'
-										placeholder="사업자번호 가져올예정" /></td>
-								<tr>
-								<tr>
-									<td><label for="star">별점</label> <input type="hidden"
-										name="star" id="point" title="별점을 선택해주세요" class="chk" />
-										<div class="starRev" title="별점을 선택해주세요">
-											<span class="star1 on" id="star1" data-value="1">★</span> <span
-												class="star2 on" id="star2" data-value="2">★</span> <span
-												class="star3 on" id="star3" data-value="3">★</span> <span
-												class="star4 on" id="star4" data-value="4">★</span> <span
-												class="star5 on" id="star5" data-value="5">★</span>
 
-										</div>
-								<tr>
-									<td>
-										<button type="submit" class="write_btn">작성하기</button>
-									</td>
-								</tr>
+									<form name="writeForm" method="post" action="/review/rWrite"
+										id="formcs">
+										<table>
+											<tbody>
 
-						
 
-							</tbody>
-						</table>
-					</form>
+												<tr>
+													<td><b>업 체 명 :</b>
+														${myOrderList.sname}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>주문번호
+															:</b> ${myOrderList.orderNum}</td>
 
-				</article>
-			</div>
+												</tr>
 
-			<!--Popup End -->
+												<tr>
+													<td><label for="content"></label> <textarea
+															id="noresize" name="r_content" class="chk"
+															title="내용을 입력하세요." placeholder="리뷰를 남겨주세요"></textarea><br></td>
+												</tr>
+												
+												<tr>
+													<td><label for="writer"></label><input type="hidden"
+														id="snum" name="snum" value='${myOrderList.snum}'
+														placeholder="사업자번호 가져올예정" /></td>
+												<tr>
+												<tr>
+													<td><label for="star">별점선택</label> <input type="hidden"
+														name="star" id="point" title="별점을 선택해주세요" class="chk" />
+														<div class="starRev" title="별점을 선택해주세요">
+															<span class="star1 on" id="star1" data-value="1">★</span>
+															<span class="star2 on" id="star2" data-value="2">★</span>
+															<span class="star3 on" id="star3" data-value="3">★</span>
+															<span class="star4 on" id="star4" data-value="4">★</span>
+															<span class="star5 on" id="star5" data-value="5">★</span>
 
-		</c:when>
-	</c:choose>
-			</div>
+														</div>
+														
+														<tr>
+													<td><br><label for="writer">작성자</label><input
+														type="text" id="writer" name="w_id" placeholder="ID가져올 예정"
+														value="${loginMember.id}" readOnly /><br></td>
+												<tr>
+												<tr>
+													<td>
+														<br><button type="submit" class="write_btn">작성완료</button>
+													</td>
+												</tr>
+
+
+
+											</tbody>
+										</table>
+									</form>
+
+								</article>
+							</div>
+
+							<!--Popup End -->
+
+						</c:when>
+					</c:choose>
+				</div>
 			</div>
 		</div>
 	</div>
 </div>
 
-	<script>
-		console.log(document.referrer);
-		//주문번호 클릭시 주문내역 상세 페이지로 이동
-		$(".tdn").click(function() {
-			// 		var url = "orderInfo?orderNum="+$(this).html();
-			// 		window.location.href=url;
-			window.location.href = document.referrer;
-		});
-		$(".sel").change(function() {
-			//var pwdch = document.getElementById('pwdcheck').value;
-			console.log($(this).attr("id"));
-			console.log($(this).val());
-			var num = parseInt($(this).attr("id"));
-			$.ajax({
-				url : '/member/rest/process',
-				data : {
-					orderNum : num,
-					process : $(this).val()
-				},
-				dataType : 'text', /*html, text, json, xml, script*/
-				method : 'get',
-				success : function(data) {
-					if (data == 1) {
-						alert("변경이 잘됨");
-						// 						$("#result").text("비밀번호가 일치 하지 않습니다.");
-					} else {
-						alert("변경이 안됨");
-						// 						$("#result").text("비밀번호가 일치합니다.");
-					}
+<script>
+	console.log(document.referrer);
+	//주문번호 클릭시 주문내역 상세 페이지로 이동
+	$(".tdn").click(function() {
+		// 		var url = "orderInfo?orderNum="+$(this).html();
+		// 		window.location.href=url;
+		window.location.href = document.referrer;
+	});
+	$(".sel").change(function() {
+		//var pwdch = document.getElementById('pwdcheck').value;
+		console.log($(this).attr("id"));
+		console.log($(this).val());
+		var num = parseInt($(this).attr("id"));
+		$.ajax({
+			url : '/member/rest/process',
+			data : {
+				orderNum : num,
+				process : $(this).val()
+			},
+			dataType : 'text', /*html, text, json, xml, script*/
+			method : 'get',
+			success : function(data) {
+				if (data == 1) {
+					alert("변경이 잘됨");
+					// 						$("#result").text("비밀번호가 일치 하지 않습니다.");
+				} else {
+					alert("변경이 안됨");
+					// 						$("#result").text("비밀번호가 일치합니다.");
 				}
-			})
-		});
-	</script>
+			}
+		})
+	});
+</script>
 
 </body>
 </html>

@@ -266,16 +266,13 @@ public class UserController {
 			return "main/storesInfo";
 		}
 
-		//문의글 작성 - db저장
+		//문의글 작성 - db
 		@PostMapping(value="/schatW")
 		public String swritePost(@RequestParam("snum") String snum, Model model, Chat chat, HttpSession session) {
-			System.out.println("너 여기도 들어오니?");
-
+			
 			Members loginMember = (Members) session.getAttribute("loginMember");
 			Members user = userService.selectUserOne(loginMember.getId());
-			
-			System.out.println("이거 찍히니??");
-			
+									
 			StoreInfo storeInfo = mainService.selectsStoreOne(snum);
 			
 			
@@ -284,10 +281,8 @@ public class UserController {
 			model.addAttribute("storeInfom",storeInfo);
 			System.out.println("snum 은" +  storeInfo.getSnum());
 			
-			
 			userService.schatWrite(chat);
-			
-			
+						
 			return "redirect:/";
 		}
 		
@@ -339,7 +334,7 @@ public class UserController {
 
 			System.out.println("delete 반환");
 
-			return "redirect:/user/cChatL";
+			return "redirect:/user/schat";
 		}
 
 }

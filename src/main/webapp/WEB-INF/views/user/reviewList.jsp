@@ -51,7 +51,7 @@
 										<th>내용</th>
 										<th>작성자</th>
 										<th>등록일</th>
-										<th>사업자번호</th>
+<!-- 										<th>사업자번호</th> -->
 										<th>별점</th>
 									</tr>
 										<c:forEach items="${reviewListU}" var="reviewListU">
@@ -83,7 +83,7 @@
 										<td><c:out value="${reviewListU.r_content}" /></td>
 										<td><c:out value="${reviewListU.w_id}" /></td>
 										<td><fmt:formatDate value="${reviewListU.r_date}" pattern="yyyy-MM-dd" /></td>
-										<td><c:out value="${reviewListU.snum}" /></td>	
+<%-- 										<td><c:out value="${reviewListU.snum}" /></td>	 --%>
 										<td class="starcolor"><c:out value="${star1}" /></td>	
 									</tr>
 									</c:forEach>

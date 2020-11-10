@@ -405,7 +405,7 @@ $(document).ready(function() {
 	padding: 10px 10px 10px 10px;
 	border: 0px solid #aaaaaa;
 	background: #f1f1f1;
-	color: red;
+	color: navy;
 	font-size: 1.3em;
 	font-weight: bold;
 	line-height: 24px;
@@ -429,6 +429,7 @@ $(document).ready(function() {
 	width: 96%;
 	margin: 2%;
 	color: #828282;
+
 }
 .starcolor {
 	color: red;
@@ -451,6 +452,22 @@ $(document).ready(function() {
 	font-weight: bold;
 
 		
+}
+
+
+#formcs{
+
+	text-indent : 5px;
+	
+
+}
+
+#noresize{
+
+	resize: none;
+	width: 690px;
+	height: 50px
+
 }
 </style>
 
@@ -887,25 +904,25 @@ this.deselect = function (trgtGoodsId){
 							<a href="javascript:popupClose();" class="layerpop_close"
 								id="layerbox_close"></a> <br>
 
-							<form name="writeForm" method="post" action="/user/schatW">
+							<form name="writeForm" id="formcs" method="post" action="/user/schatW">
 								<table>
 									<tbody>
 
 										<tr>
 											<td><label for="content">제목</label> <textarea
-													id="c_title" name="c_title" class="chk" title="제목을 입력하세요."
-													placeholder="내용을 입력해주세요"></textarea></td>
+													id="noresize" name="c_title" class="chk" title="제목을 입력하세요."
+													placeholder="제목을 입력해주세요"></textarea></td>
 										</tr>
 
 										<tr>
 											<td><label for="content">내용</label> <textarea
-													id="c_content" name="c_content" class="chk"
+													id="noresize" name="c_content" class="chk"
 													title="내용을 입력하세요." placeholder="내용을 입력해주세요"></textarea></td>
 										</tr>
 										<tr>
 											<td><label for="writer">작성자</label><input type="text"
 												id="writer" name="w_id" placeholder="ID가져올 예정"
-												value="${loginMember.id}" /></td>
+												value="${loginMember.id}" readOnly/></td>
 										<tr>
 										<tr>
 											<td><label for="writer"></label><input type="hidden"
@@ -919,7 +936,7 @@ this.deselect = function (trgtGoodsId){
 										<tr>
 
 											<td>
-												<button type="submit" class="write_btn">작성하기</button>
+ 												<button type="submit" class="write_btn" >작성하기</button>
 											</td>
 										</tr>
 
