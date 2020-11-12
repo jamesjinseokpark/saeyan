@@ -152,16 +152,13 @@
 	<!-- 게시글 목록 -->
 	<select id="list" resultType="com.hk.saeyan.dto.Chat"
 		parameterType="com.hk.saeyan.dto.Criteria">
-		SELECT w_id, c_no, c_date, c_content, c_title, snum, g_check, c_cnt
+	SELECT w_id, c_no, c_date, c_content, c_title, snum, g_check, c_cnt
 		FROM
 		(SELECT w_id,
 		c_no, c_date, c_content, c_title, snum, g_check, c_cnt,
 		row_number()
 		over(ORDER
-		BY c_no DESC) as rnum FROM chat) WHERE snum is null and rnum
-		BETWEEN #{rowStart} AND
-		#{rowEnd}
-		ORDER BY c_no DESC
+		BY c_no desc) FROM chat) WHERE snum is null ORDER BY c_no desc		
 	</select>
 
 	<!-- 게시글 총 개수 -->

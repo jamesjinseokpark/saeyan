@@ -53,6 +53,7 @@
 										<th>등록일</th>
 									</tr>
 								</thead>
+								<!--  리스트 노출 -->
 								<c:forEach items="${schatList}" var="schatList">
 									<tr style="font-size:20px;">
 										<td><c:out value="${schatList.c_no}" /></td>

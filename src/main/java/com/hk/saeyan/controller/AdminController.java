@@ -380,13 +380,13 @@ public class AdminController {
 			return "redirect:/admin/aChat";
 		}
 
-		//게시글 - 댓글달기 1009추가 james(관리자만 작성으로 미 구현)
+		//게시글 - 댓글달기 1009추가 james(관리자만 작성)
 
 		@PostMapping(value="/aChatCom")
 
 		public String writeCommentPost(ChatComment ccment, @Param("c_no")int c_no) {
 
-			System.out.println("commentWrite-con 들어옴");
+			System.out.println("commentWrite-con check");
 
 			adminService.writeComment(ccment);
 			
